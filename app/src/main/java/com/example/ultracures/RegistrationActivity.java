@@ -90,7 +90,6 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         else {
 
-            progressDialog.show();
             str_name = ed_username.getText().toString().trim();
             str_speciality = ed_speciality.getText().toString().trim();
             str_qualification = ed_qualification.getText().toString().trim();
@@ -104,56 +103,61 @@ public class RegistrationActivity extends AppCompatActivity {
             str_confirmp = ed_confirmp.getText().toString().trim();
 
 
-            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    progressDialog.dismiss();
-                    ed_username.setText("");
-                    ed_speciality.setText("");
-                    ed_qualification.setText("");
-                    ed_designation.setText("");
-                    ed_institution.setText("");
-                    ed_email.setText("");
-                    ed_mobile.setText("");
-                    ed_account.setText("");
-                    ed_hours.setText("");
-                    ed_password.setText("");
-                    ed_confirmp.setText("");
-                    Toast.makeText(RegistrationActivity.this, response, Toast.LENGTH_SHORT).show();
-                }
-            }, new Response.ErrorListener() {
+            if (str_password.equals(str_confirmp)) {
+                progressDialog.show();
+                StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressDialog.dismiss();
+                        ed_username.setText("");
+                        ed_speciality.setText("");
+                        ed_qualification.setText("");
+                        ed_designation.setText("");
+                        ed_institution.setText("");
+                        ed_email.setText("");
+                        ed_mobile.setText("");
+                        ed_account.setText("");
+                        ed_hours.setText("");
+                        ed_password.setText("");
+                        ed_confirmp.setText("");
+                        Toast.makeText(RegistrationActivity.this, response, Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    progressDialog.dismiss();
-                    Toast.makeText(RegistrationActivity.this, error.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(RegistrationActivity.this, error.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                    }
                 }
+
+                ) {
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+
+                        params.put("name", str_name);
+                        params.put("speciality", str_speciality);
+                        params.put("qualification", str_qualification);
+                        params.put("designation", str_designation);
+                        params.put("institution", str_institution);
+                        params.put("email", str_email);
+                        params.put("mobile", str_mobile);
+                        params.put("account", str_account);
+                        params.put("hours", str_hours);
+                        params.put("password", str_password);
+                        params.put("confirmp", str_confirmp);
+                        return params;
+
+                    }
+                };
+
+                RequestQueue requestQueue = Volley.newRequestQueue(RegistrationActivity.this);
+                requestQueue.add(request);
             }
-
-            ) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-
-                    params.put("name", str_name);
-                    params.put("speciality", str_speciality);
-                    params.put("qualification", str_qualification);
-                    params.put("designation", str_designation);
-                    params.put("institution", str_institution);
-                    params.put("email", str_email);
-                    params.put("mobile", str_mobile);
-                    params.put("account", str_account);
-                    params.put("hours", str_hours);
-                    params.put("password", str_password);
-                    params.put("confirmp", str_confirmp);
-                    return params;
-
-                }
-            };
-
-            RequestQueue requestQueue = Volley.newRequestQueue(RegistrationActivity.this);
-            requestQueue.add(request);
-
+            else{
+                Toast.makeText(this, "Passwords Doesn't Match", Toast.LENGTH_SHORT).show();
+            }
 
         }
     }
